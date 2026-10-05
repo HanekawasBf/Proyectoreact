@@ -1,0 +1,18 @@
+# Entorno virtual
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+.env
+
+# Node / React
+node_modules/
+dist/
+
+# Editor y sistema
+.vscode/
+.DS_Store
