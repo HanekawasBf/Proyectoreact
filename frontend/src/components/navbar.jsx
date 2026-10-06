@@ -1,8 +1,10 @@
-function Navbar() {
+function Navbar({ onMenu }) {
   return (
-    <nav className="navbar">
+    <header className="navbar">
+      <button className="menu-btn" onClick={onMenu}>☰</button>
       <h1>AnimeCatálogo</h1>
-    </nav>
+      <p>Tus series favoritas</p>
+    </header>
   );
 }
 
