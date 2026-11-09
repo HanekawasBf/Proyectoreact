@@ -1,29 +1,30 @@
-/**
- * Permite al usuario:
- *  - Buscar animes por titulo.
- *  - Filtrar por genero.
- *  - Ordenar por calificacion o por anio.
- *  - Limpiar todos los filtros de una sola vez.
- *
- * Props:
- *  @param {Function} onCerrar     
- *  @param {string}   busqueda     
- *  @param {Function} setBusqueda  
- *  @param {string}   genero       
- *  @param {Function} setGenero    
- *  @param {string}   orden        
- *  @param {Function} setOrden     
- */
-function MenuFiltros({ onCerrar, busqueda, setBusqueda, genero, setGenero, orden, setOrden }) {
-  // Opciones disponibles para el selector de genero.
-  // "Todos" es el valor especial que desactiva el filtro por genero en App.
-  const generos = ["Todos", "Aventura", "Suspenso", "Acción", "Ciencia ficción", "Romance", "Deportes"];
+import { useState, useEffect } from "react";
 
-// Restablece los tres filtros a sus valores iniciales.
+function MenuFiltros({
+  onCerrar,
+  busqueda,
+  setBusqueda,
+  genero,
+  setGenero,
+  orden,
+  setOrden,
+  soloFavoritos,
+  setSoloFavoritos,
+}) {
+  const [generos, setGeneros] = useState(["Todos"]);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/generos/")
+      .then((res) => res.json())
+      .then((datos) => setGeneros(["Todos", ...datos]))
+      .catch(() => {});
+  }, []);
+
   function limpiar() {
-    setBusqueda("");      
-    setGenero("Todos");   
-    setOrden("ninguno");  
+    setBusqueda("");
+    setGenero("Todos");
+    setOrden("ninguno");
+    setSoloFavoritos(false);
   }
 
   return (
@@ -33,8 +34,6 @@ function MenuFiltros({ onCerrar, busqueda, setBusqueda, genero, setGenero, orden
         <button className="panel-close" onClick={onCerrar}>✕</button>
       </div>
 
-      {/* Campo de busqueda por titulo.
-            su valor viene de "busqueda" y cada tecla actualiza el estado.*/}
       <label>Buscar por título</label>
       <input
         type="text"
@@ -43,9 +42,6 @@ function MenuFiltros({ onCerrar, busqueda, setBusqueda, genero, setGenero, orden
         placeholder="Ej: Death Note"
       />
 
-      {/* Selector de genero.
-        Las opciones se generan recorriendo el arreglo "generos";
-        "key" ayuda a React a identificar cada <option>. */}
       <label>Género</label>
       <select value={genero} onChange={(e) => setGenero(e.target.value)}>
         {generos.map((g) => (
@@ -53,9 +49,6 @@ function MenuFiltros({ onCerrar, busqueda, setBusqueda, genero, setGenero, orden
         ))}
       </select>
 
-      {/* Selector de ordenamiento.
-        Los "value" deben coincidir con los que App evalua en el ordenamiento:
-        "ninguno", "calificacion" y "anio". */}
       <label>Ordenar por</label>
       <select value={orden} onChange={(e) => setOrden(e.target.value)}>
         <option value="ninguno">Sin ordenar</option>
@@ -63,6 +56,14 @@ function MenuFiltros({ onCerrar, busqueda, setBusqueda, genero, setGenero, orden
         <option value="anio">Más reciente</option>
       </select>
 
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={soloFavoritos}
+          onChange={(e) => setSoloFavoritos(e.target.checked)}
+        />
+        Solo favoritos
+      </label>
 
       <button className="panel-clear" onClick={limpiar}>Limpiar filtros</button>
     </aside>

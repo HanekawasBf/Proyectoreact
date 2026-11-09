@@ -23,3 +23,10 @@ class Anime(models.Model):
         if not resenas:
             return 0
         return round(sum(r.calificacion for r in resenas) / len(resenas), 1)
+
+class ImagenAnime(models.Model):
+    anime = models.ForeignKey(Anime, on_delete=models.CASCADE, related_name='imagenes')
+    url = models.URLField()
+
+    def __str__(self):
+        return f"Imagen de {self.anime.titulo}"
